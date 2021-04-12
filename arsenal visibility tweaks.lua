@@ -8,6 +8,12 @@ local make_nametags_invisible = false
 local gun_material = "ForceField"  -- if material is set to "None", no material will be set. refer to https://developer.roblox.com/en-us/api-reference/enum/Material for a list of materials.
 local arm_material = "None"
 
+-- ignore this. used to separate the arms and cssarms
+local blacklist = {
+    ["Left Arm"] = true;
+    ["Right Arm"] = true;
+}
+
 local camera = game.Workspace.CurrentCamera
 local player_gui = game.Players.LocalPlayer.PlayerGui
 local runservice = game:GetService("RunService")
@@ -16,22 +22,22 @@ runservice.Heartbeat:Connect(function(viewmodel_edit)
     local arms = camera:FindFirstChild("Arms")
     if arms then
         for i,v in pairs(arms:GetDescendants()) do
-            if v:IsA("BasePart") and v.Transparency ~= 1 then
+            if v:IsA("BasePart") and v.Transparency ~= 1 and not blacklist[v.Name] then
                 v.Transparency = transparency_value
-            end
+            if gun_material ~= "None" then
+                v.Material = gun_material
             if v:IsA("Decal") then
                 v.Transparency = transparency_value
             end
-            if gun_material ~= "None" then
-                v.Material = gun_material
+            end
             end
         end
-        for r,e in pairs(a.CSSArms:GetDescendants()) do
+        for r,e in pairs(arms.CSSArms:GetDescendants()) do
             if e:IsA("BasePart") then
                 e.Transparency = arm_transparency_value
-            end
             if arm_material ~= "None" then
                 e.Material = arm_material
+            end
             end
         end
     end
