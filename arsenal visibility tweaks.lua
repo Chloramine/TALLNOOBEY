@@ -12,34 +12,32 @@ local camera = game.Workspace.CurrentCamera
 local player_gui = game.Players.LocalPlayer.PlayerGui
 local runservice = game:GetService("RunService")
 
-
-runservice.Heartbeat:Connect(function(dothings)
-    local a = camera:FindFirstChild("Arms")
-    local b = player_gui
-    if a then
-        for z,v in pairs(a:GetDescendants()) do
+runservice.Heartbeat:Connect(function(viewmodel_edit)
+    local arms = camera:FindFirstChild("Arms")
+    if arms then
+        for i,v in pairs(arms:GetDescendants()) do
             if v:IsA("BasePart") and v.Transparency ~= 1 then
                 v.Transparency = transparency_value
-            if gun_material ~= "None" then
-                v.Material = gun_material
-            end
             end
             if v:IsA("Decal") then
                 v.Transparency = transparency_value
             end
-        end
-        if a:FindFirstChild("HumanoidRootPart") and a.HumanoidRootPart.Transparency < 1 then
-            a.HumanoidRootPart.Transparency = 1
-        end
-        for i,x in pairs(game.Workspace.Camera.Arms.CSSArms:GetDescendants()) do
-            if x:IsA("BasePart") then
-                x.Transparency = arm_transparency_value
-            if arm_material ~= "None" then
-                x.Material = arm_material
+            if gun_material ~= "None" then
+                v.Material = gun_material
             end
+        end
+        for r,e in pairs(a.CSSArms:GetDescendants()) do
+            if e:IsA("BasePart") then
+                e.Transparency = arm_transparency_value
+            end
+            if arm_material ~= "None" then
+                e.Material = arm_material
             end
         end
     end
+end)
+
+runservice.Heartbeat:Connect(function(damage_indicators)
     for l,k in pairs(player_gui:GetChildren()) do
         if k:IsA("BillboardGui") then
             k.TextButton.TextTransparency = damage_indicator_transparency
@@ -53,7 +51,7 @@ runservice.Heartbeat:Connect(function(dothings)
     end
 end)
 
-runservice.RenderStepped:Connect(function(dootherthings)
+runservice.Heartbeat:Connect(function(invisible_nametags)
     if make_nametags_invisible == true then
         for p,o in pairs(player_gui.Nametags:GetChildren()) do
             o.plrname.TextTransparency = teammate_nametag_transparency
@@ -63,7 +61,16 @@ runservice.RenderStepped:Connect(function(dootherthings)
         end
     end
 end)
-    
+
+-- patch the humanoidrootpart being visible for some weapons.
+
+runservice.Heartbeat:Connect(function(humanoidrootpart_patch)
+    local arms = camera:FindFirstChild("Arms")
+    if arms:FindFirstChild("HumanoidRootPart") and arms.HumanoidRootPart.Transparency < 1 then
+        arms.HumanoidRootPart.Transparency = 1
+    end
+end)
+
 if remove_crosshair_dot == true then
     player_gui.GUI.Crosshairs.Crosshair.Dot.Transparency = 1
 end
